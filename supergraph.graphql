@@ -1,0 +1,209 @@
+
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  
+{
+  query: Query
+  mutation: Mutation
+  
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    `SECURITY` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    `EXECUTION` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  BUSINESS_SERVICE @join__graph(name: "business-service", url: "http://localhost:8081/graphql") 
+  NODE_RESOLVER_SERVICE @join__graph(name: "node-resolver-service", url: "http://localhost:8082/graphql") 
+}
+
+type Person implements Actor & Node @join__type(graph: BUSINESS_SERVICE, key: "id")  @join__type(graph: NODE_RESOLVER_SERVICE, key: "id")  @join__implements(graph: BUSINESS_SERVICE, interface: "Actor")  @join__implements(graph: BUSINESS_SERVICE, interface: "Node")  @join__implements(graph: NODE_RESOLVER_SERVICE, interface: "Node")  {
+  id: ID!
+  name: String @join__field(graph: BUSINESS_SERVICE) 
+  email: String @join__field(graph: BUSINESS_SERVICE) 
+  profilePicture: Image @join__field(graph: BUSINESS_SERVICE) 
+  joined: String @join__field(graph: BUSINESS_SERVICE) 
+  location: Location @join__field(graph: BUSINESS_SERVICE) 
+}
+
+type Image @join__type(graph: BUSINESS_SERVICE)  {
+  url(height: Int, width: Int) : String!
+  altText: String
+}
+
+type Location @join__type(graph: BUSINESS_SERVICE)  {
+  id: ID!
+  name: String!
+}
+
+type Organization implements Actor & Node @join__type(graph: BUSINESS_SERVICE, key: "id")  @join__type(graph: NODE_RESOLVER_SERVICE, key: "id")  @join__implements(graph: BUSINESS_SERVICE, interface: "Actor")  @join__implements(graph: BUSINESS_SERVICE, interface: "Node")  @join__implements(graph: NODE_RESOLVER_SERVICE, interface: "Node")  {
+  id: ID!
+  name: String @join__field(graph: BUSINESS_SERVICE) 
+  profilePicture: Image @join__field(graph: BUSINESS_SERVICE) 
+  joined: String @join__field(graph: BUSINESS_SERVICE) 
+  organizationKind: OrganizationKind @join__field(graph: BUSINESS_SERVICE) 
+}
+
+type Story implements Node @join__type(graph: BUSINESS_SERVICE, key: "id")  @join__type(graph: NODE_RESOLVER_SERVICE, key: "id")  @join__implements(graph: BUSINESS_SERVICE, interface: "Node")  @join__implements(graph: NODE_RESOLVER_SERVICE, interface: "Node")  {
+  id: ID!
+  createdAt: String! @join__field(graph: BUSINESS_SERVICE) 
+  category: Category @join__field(graph: BUSINESS_SERVICE) 
+  title: String! @join__field(graph: BUSINESS_SERVICE) 
+  summary: String @join__field(graph: BUSINESS_SERVICE) 
+  updatedAt: String @join__field(graph: BUSINESS_SERVICE) 
+  attachments: [Image] @join__field(graph: BUSINESS_SERVICE) 
+  poster: Actor! @join__field(graph: BUSINESS_SERVICE) 
+  thumbnail: Image @join__field(graph: BUSINESS_SERVICE) 
+  likeCount: Int @join__field(graph: BUSINESS_SERVICE) 
+  doesViewerLike: Boolean @join__field(graph: BUSINESS_SERVICE) 
+  comments(first: Int, after: String) : CommentsConnection @join__field(graph: BUSINESS_SERVICE) 
+}
+
+type CommentsConnection @join__type(graph: BUSINESS_SERVICE)  {
+  edges: [CommentsConnectionEdge]
+  pageInfo: PageInfo
+}
+
+type CommentsConnectionEdge @join__type(graph: BUSINESS_SERVICE)  {
+  node: Comment
+  cursor: String
+}
+
+type Comment @join__type(graph: BUSINESS_SERVICE)  {
+  id: ID!
+  text: String
+}
+
+type PageInfo @join__type(graph: BUSINESS_SERVICE)  {
+  startCursor: String
+  endCursor: String
+  lastCursor: String
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+type Query @join__type(graph: BUSINESS_SERVICE)  @join__type(graph: NODE_RESOLVER_SERVICE)  {
+  viewer: Viewer @join__field(graph: BUSINESS_SERVICE) 
+  topStory(category: Category) : Story @join__field(graph: BUSINESS_SERVICE) 
+  topStories: [Story] @join__field(graph: BUSINESS_SERVICE) 
+  node(id: ID!) : Node @join__field(graph: NODE_RESOLVER_SERVICE) 
+  nodes(ids: [ID!]!) : [Node]! @join__field(graph: NODE_RESOLVER_SERVICE) 
+}
+
+type Viewer @join__type(graph: BUSINESS_SERVICE)  {
+  actor: Actor
+  contacts(search: String) : [Actor]
+  newsfeedStories(first: Int, after: String, category: Category) : StoriesConnection
+}
+
+type StoriesConnection @join__type(graph: BUSINESS_SERVICE)  {
+  edges: [StoriesConnectionEdge]
+  pageInfo: PageInfo
+}
+
+type StoriesConnectionEdge @join__type(graph: BUSINESS_SERVICE)  {
+  node: Story
+  cursor: String
+}
+
+type Mutation @join__type(graph: BUSINESS_SERVICE)  {
+  likeStory(id: ID!, doesLike: Boolean!) : StoryMutationResponse
+  postStoryComment(id: ID!, text: String!) : StoryCommentMutationResponse
+}
+
+type StoryMutationResponse @join__type(graph: BUSINESS_SERVICE)  {
+  story: Story
+}
+
+type StoryCommentMutationResponse @join__type(graph: BUSINESS_SERVICE)  {
+  story: Story
+  commentEdge: CommentsConnectionEdge
+}
+
+interface Actor @join__type(graph: BUSINESS_SERVICE)  {
+  id: ID!
+  name: String
+  profilePicture: Image
+  joined: String
+}
+
+interface Node @join__type(graph: BUSINESS_SERVICE)  @join__type(graph: NODE_RESOLVER_SERVICE)  {
+  id: ID!
+}
+
+enum OrganizationKind @join__type(graph: BUSINESS_SERVICE)  {
+  COMMERCIAL @join__enumValue(graph: BUSINESS_SERVICE) 
+  NONPROFIT @join__enumValue(graph: BUSINESS_SERVICE) 
+  GOVERNMENT @join__enumValue(graph: BUSINESS_SERVICE) 
+  JOURNALISTIC @join__enumValue(graph: BUSINESS_SERVICE) 
+}
+
+enum Category @join__type(graph: BUSINESS_SERVICE)  {
+  ALL @join__enumValue(graph: BUSINESS_SERVICE) 
+  EDUCATION @join__enumValue(graph: BUSINESS_SERVICE) 
+  NEWS @join__enumValue(graph: BUSINESS_SERVICE) 
+  COOKING @join__enumValue(graph: BUSINESS_SERVICE) 
+}
+    

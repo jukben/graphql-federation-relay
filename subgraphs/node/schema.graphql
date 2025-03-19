@@ -1,0 +1,24 @@
+scalar _FieldSet
+
+directive @key(fields: _FieldSet!) repeatable on OBJECT | INTERFACE
+
+interface Node {
+  id: ID!
+}
+
+type Query {
+  node(id: ID!): Node
+  nodes(ids: [ID!]!): [Node]!
+}
+
+type Person implements Node @key(fields: "id") {
+  id: ID!
+}
+
+type Organization implements Node @key(fields: "id") {
+  id: ID!
+}
+
+type Story implements Node @key(fields: "id") {
+  id: ID!
+}
