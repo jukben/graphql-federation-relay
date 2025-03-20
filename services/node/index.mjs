@@ -3,7 +3,7 @@ import mercurius from "mercurius";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { decodeGlobalID } from "../shared/id.mjs";
+import { decodeGlobalID } from "../util/id.mjs";
 import { NODE_RESOLVER_PORT } from "./config.mjs";
 import { buildSubgraphSchema } from "@apollo/subgraph";
 import { parse } from "graphql";

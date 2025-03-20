@@ -13,8 +13,8 @@
     "watch-webpack": "webpack server",
     "watch-hive-gateway": "hive-gateway supergraph",
     "watch-supergraph": "nodemon ./supergraph/index.mjs",
-    "watch-business": "nodemon ./subgraphs/business/index.mjs",
-    "watch-node": "nodemon ./subgraphs/node/index.mjs",
+    "watch-business": "nodemon ./services/business/index.mjs",
+    "watch-node": "nodemon ./services/node/index.mjs",
     "watch-image-server": "nodemon ./image-server.js",
     "dev": "concurrently npm:watch-* -c auto"
   },

@@ -57,7 +57,7 @@ This will concurrently start all necessary services:
 - `/src` - React frontend application
   - `/components` - React components
   - `/relay` - Relay configuration and environment
-- `/subgraphs` - GraphQL Federation services
+- `/services` - GraphQL Federation services
   - `/business` - Main business logic service (template for additional business services)
   - `/node` - Node resolver implementation
 - `/supergraph` - Federation composition logic
@@ -81,13 +81,15 @@ Key implementation details:
 
 The architecture is designed to be extensible. To add a new business service:
 
-1. Copy the template from `/subgraphs/business`
+1. Copy the template from `/services/business`
 2. Define your service-specific schema extending the Node interface
 3. Implement resolvers for your types
 4. Add the service to the `SERVICES` array in `/supergraph/index.mjs`
 5. Update the gateway configuration if needed
 
 The Node resolver pattern shines in this setup as it provides a unified way to resolve objects across all business services while maintaining clean separation of concerns.
+
+In this example, `node` field is queried for fetching comments on each story (`StoryCommentsSection` component). Additionally it is also used when hovering over user avatars (`PosterDetailsHovercardContents` component)
 
 ## Additional Resources
 

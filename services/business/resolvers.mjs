@@ -1,4 +1,4 @@
-import { encodeGlobalID, decodeGlobalID } from "../shared/id.mjs";
+import { encodeGlobalID, decodeGlobalID } from "../util/id.mjs";
 
 // Fake Database
 const nodes = [
