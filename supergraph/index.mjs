@@ -4,19 +4,19 @@ import {
   compositionHasErrors,
 } from "@theguild/federation-composition";
 import { readFileSync, writeFileSync } from "fs";
-import { BUSINESS_SERVICE_PORT } from "../subgraphs/business/config.mjs";
-import { NODE_RESOLVER_PORT } from "../subgraphs/node/config.mjs";
+import { BUSINESS_SERVICE_PORT } from "../services/business/config.mjs";
+import { NODE_RESOLVER_PORT } from "../services/node/config.mjs";
 
 // Configuration for each service
 const SERVICES = [
   {
     name: "business-service",
-    schemaPath: "./subgraphs/business/schema.graphql",
+    schemaPath: "./services/business/schema.graphql",
     port: BUSINESS_SERVICE_PORT,
   },
   {
     name: "node-resolver-service",
-    schemaPath: "./subgraphs/node/schema.graphql",
+    schemaPath: "./services/node/schema.graphql",
     port: NODE_RESOLVER_PORT,
   },
 ];
